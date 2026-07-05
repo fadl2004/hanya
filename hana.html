@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Headache Tracker Pro</title>
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --primary-light: #818cf8;
+            --primary-dark: #4f46e5;
+            --bg-body: #f8fafc;
+            --bg-card: rgba(255, 255, 255, 0.9);
+            --bg-input: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --font-size-base: 16px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --success: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-size: var(--font-size-base);
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .logo-area h1 {
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--primary-color);
+        }
+
+        .logo-area p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        button {
+            padding: 10px 20px;
+            border-radius: var(--radius-md);
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-primary { background-color: var(--primary-color); color: white; }
+        .btn-primary:hover { background-color: var(--primary-dark); transform: translateY(-1px); }
+        .btn-secondary { background-color: var(--bg-input); border: 1px solid var(--border-color); color: var(--text-main); }
+        .btn-secondary:hover { background-color: var(--border-color); }
+        .btn-danger { background-color: var(--danger); color: white; }
+
+        select, input[type="text"], input[type="date"], input[type="time"], input[type="number"], textarea {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            color: var(--text-main);
+            outline: none;
+            box-shadow: inset var(--shadow-sm);
+        }
+
+        select:focus, input:focus, textarea:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+        }
+
+        @media (min-width: 1024px) {
+            .dashboard-grid { grid-template-columns: 380px 1fr; }
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-md);
+            position: relative;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 8px;
+            color: var(--primary-color);
+        }
+
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; margin-bottom: 6px; font-weight: 500; font-size: 0.9rem; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+        .slider-container { display: flex; align-items: center; gap: 12px; }
+        .slider-container input[type="range"] { flex: 1; accent-color: var(--primary-color); height: 6px; cursor: pointer; }
+        .slider-val { font-weight: 700; min-width: 24px; text-align: center; color: var(--primary-color); }
+
+        .choice-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .choice-box { position: relative; }
+        .choice-box input { position: absolute; opacity: 0; cursor: pointer; height: 0; width: 0; }
+        .choice-label {
+            display: block;
+            padding: 8px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            text-align: center;
+            font-size: 0.85rem;
+            cursor: pointer;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+        .choice-box input:checked + .choice-label { background-color: var(--primary-color); color: white; border-color: var(--primary-color); }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+        .stat-box { background: var(--bg-card); border: 1px solid var(--border-color); padding: 12px; border-radius: var(--radius-md); text-align: center; box-shadow: var(--shadow-sm); }
+        .stat-box .value { font-size: 1.3rem; font-weight: 800; color: var(--primary-color); margin-top: 4px; }
+        .stat-box .lbl { font-size: 0.8rem; color: var(--text-muted); }
+
+        .filter-bar { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; background: var(--bg-card); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color); }
+        .filter-bar > * { flex: 1; min-width: 140px; }
+
+        .table-container { overflow-x: auto; margin-top: 12px; border-radius: var(--radius-md); border: 1px solid var(--border-color); }
+        table { width: 100%; border-collapse: collapse; text-align: right; font-size: 0.9rem; background: var(--bg-card); }
+        th, td { padding: 12px 16px; border-bottom: 1px solid var(--border-color); white-space: nowrap; }
+        th { background-color: rgba(99, 102, 241, 0.08); color: var(--primary-color); font-weight: 700; }
+        tr:hover { background-color: rgba(99, 102, 241, 0.03); }
+
+        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; text-align: center; }
+        .calendar-day-name { font-weight: 700; font-size: 0.8rem; color: var(--text-muted); padding-bottom: 6px; }
+        .calendar-cell { aspect-ratio: 1; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 6px; background: var(--bg-input); border: 1px solid var(--border-color); border-radius: var(--radius-md); cursor: pointer; font-weight: 600; }
+        .calendar-cell.has-headache { background-color: rgba(239, 68, 68, 0.15); border-color: var(--danger); color: var(--danger); }
+        .calendar-cell.empty { background: transparent; border: none; cursor: default; }
+
+        .canvas-container { position: relative; width: 100%; height: 260px; background: var(--bg-input); border-radius: var(--radius-md); border: 1px solid var(--border-color); padding: 10px; margin-top: 10px; }
+        .custom-chart-svg { width: 100%; height: 100%; }
+
+        .toast-container { position: fixed; bottom: 24px; right: 24px; max-width: 400px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
+        .toast { padding: 14px 20px; border-radius: var(--radius-md); color: white; font-weight: 600; box-shadow: var(--shadow-lg); display: flex; align-items: center; justify-content: space-between; animation: slideIn 0.3s ease forwards; }
+        @keyframes slideIn { from { transform: translateY(1rem); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .toast.success { background-color: var(--success); }
+        .toast.error { background-color: var(--danger); }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s ease; z-index: 5000; }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal-card { background: var(--bg-body); border-radius: var(--radius-lg); max-width: 500px; width: 90%; padding: 24px; box-shadow: var(--shadow-lg); border: 1px solid var(--border-color); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; }
+
+        @media print {
+            body { background: white; color: black; padding: 0; }
+            .no-print, header, .filter-bar, button, th:last-child, td:last-child { display: none !important; }
+            .dashboard-grid { display: block !important; }
+            .card { border: none !important; box-shadow: none !important; padding: 0 !important; margin-bottom: 30px; }
+            th, td { border: 1px solid #000 !important; white-space: normal !important; color: black !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <div class="container">
+        <header class="no-print">
+            <div class="logo-area">
+                <h1>🧠 Headache Tracker Pro</h1>
+                <p>نظام ذكي متكامل ومحلي لتتبع وإدارة نوبات الصداع وتحليل مسبباتها</p>
+            </div>
+            <div class="header-controls">
+                <button class="btn-primary" onclick="window.print()">🖨️ طباعة التقرير</button>
+            </div>
+        </header>
+
+        <div class="dashboard-grid">
+            
+            <div class="no-print" style="display: flex; flex-direction: column; gap: 24px;">
+                
+                <div class="card">
+                    <div class="card-title">📝 تسجيل نوبة صداع جديدة</div>
+                    <form id="headacheForm" onsubmit="handleFormSubmit(event)">
+                        <input type="hidden" id="editRecordId" value="">
+                        
+                        <div class="form-group">
+                            <label>التاريخ</label>
+                            <input type="date" id="fDate" required>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>وقت البداية</label>
+                                <input type="time" id="fTimeStart" required>
+                            </div>
+                            <div class="form-group">
+                                <label>وقت النهاية</label>
+                                <input type="time" id="fTimeEnd" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>درجة الألم شدة الصداع</label>
+                            <div class="slider-container">
+                                <input type="range" id="fSeverity" min="1" max="10" value="5" oninput="document.getElementById('valSeverity').innerText = this.value">
+                                <span class="slider-val" id="valSeverity">5</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>مكان تركيز الألم</label>
+                            <div class="choice-grid">
+                                <div class="choice-box"><input type="radio" name="fLoc" id="loc1" value="يمين" checked><label class="choice-label" for="loc1">يمين</label></div>
+                                <div class="choice-box"><input type="radio" name="fLoc" id="loc2" value="يسار"><label class="choice-label" for="loc2">يسار</label></div>
+                                <div class="choice-box"><input type="radio" name="fLoc" id="loc3" value="أمام"><label class="choice-label" for="loc3">أمام</label></div>
+                                <div class="choice-box"><input type="radio" name="fLoc" id="loc4" value="خلف"><label class="choice-label" for="loc4">خلف</label></div>
+                                <div class="choice-box"><input type="radio" name="fLoc" id="loc5" value="الرقبة"><label class="choice-label" for="loc5">الرقبة</label></div>
+                                <div class="choice-box"><input type="radio" name="fLoc" id="loc6" value="حول العين"><label class="choice-label" for="loc6">حول العين</label></div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>كمية شرب المياه (لتر)</label>
+                                <input type="number" id="fWater" step="0.1" min="0" max="10" value="2.0">
+                            </div>
+                            <div class="form-group">
+                                <label>ساعات النوم المتصلة</label>
+                                <input type="number" id="fSleep" step="0.5" min="0" max="24" value="7">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>مستوى الإجهاد والضغط النفسي</label>
+                            <div class="slider-container">
+                                <input type="range" id="fStress" min="1" max="10" value="4" oninput="document.getElementById('valStress').innerText = this.value">
+                                <span class="slider-val" id="valStress">4</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>ملاحظات إضافية ومحفزات محتملة</label>
+                            <textarea id="fNotes" rows="2" placeholder="الطقس، نوع الطعام، الكافيين..."></textarea>
+                        </div>
+
+                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                            <button type="submit" class="btn-primary" style="flex: 1; justify-content: center;" id="btnSubmitForm">💾 حفظ السجل الطبي</button>
+                            <button type="button" class="btn-secondary" onclick="resetForm()" id="btnCancelEdit" style="display:none;">إلغاء</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">📅 تقويم المتابعة الشهري</div>
+                    <div class="calendar-wrapper">
+                        <div class="calendar-header">
+                            <button class="btn-secondary" style="padding: 4px 10px;" onclick="navigateCalendar(-1)">◀</button>
+                            <h4 id="calendarMonthYearDisplay" style="font-weight: 700;"></h4>
+                            <button class="btn-secondary" style="padding: 4px 10px;" onclick="navigateCalendar(1)">▶</button>
+                        </div>
+                        <div class="calendar-grid" id="calendarGridContent"></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">💾 إدارة البيانات والنسخ الاحتياطي</div>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <button class="btn-secondary" onclick="exportToJSON()" style="justify-content: center;">📤 تصدير البيانات (JSON)</button>
+                        <div style="border: 1px dashed var(--border-color); padding: 10px; border-radius: var(--radius-md); text-align: center; position: relative;">
+                            <span style="font-size: 0.85rem; color: var(--text-muted);">📥 استيراد ملف البيانات (JSON)</span>
+                            <input type="file" id="importFileInput" accept=".json" onchange="importFromJSON(event)" style="position: absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer;">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 24px;">
+                
+                <div class="card">
+                    <div class="card-title">📊 المؤشرات والإحصائيات التحليلية الشاملة</div>
+                    <div class="stats-grid">
+                        <div class="stat-box"><div class="lbl">عدد النوبات الإجمالي</div><div class="value" id="stValCount">0</div></div>
+                        <div class="stat-box"><div class="lbl">إجمالي ساعات الصداع</div><div class="value" id="stValTotalHours">0</div></div>
+                        <div class="stat-box"><div class="lbl">متوسط شدة الألم</div><div class="value" id="stValAvgSeverity">0</div></div>
+                        <div class="stat-box"><div class="lbl">أعلى درجة ألم</div><div class="value" id="stValMaxSeverity">0</div></div>
+                        <div class="stat-box"><div class="lbl">أكثر مكان ألم تكراراً</div><div class="value" id="stValTopLocation">-</div></div>
+                        <div class="stat-box"><div class="lbl">متوسط ساعات النوم</div><div class="value" id="stValAvgSleep">0</div></div>
+                        <div class="stat-box"><div class="lbl">متوسط شرب المياه</div><div class="value" id="stValAvgWater">0</div></div>
+                        <div class="stat-box"><div class="lbl">متوسط الإجهاد النفسي</div><div class="value" id="stValAvgStress">0</div></div>
+                    </div>
+                </div>
+
+                <div class="card no-print">
+                    <div class="card-title">📈 التحليل البصري المحلي (شدة الألم التاريخية)</div>
+                    <div class="canvas-container" id="chartWrapper">
+                        <svg class="custom-chart-svg" id="nativeChartSvg" viewBox="0 0 500 200" preserveAspectRatio="none"></svg>
+                    </div>
+                </div>
+
+                <div class="card" style="flex: 1;">
+                    <div class="card-title">🗂️ سجل النوبات والبيانات التاريخية المفصلة</div>
+                    
+                    <div class="filter-bar no-print">
+                        <select id="filterSeverity" onchange="filterAndRenderDataEngine()">
+                            <option value="">كل درجات الألم</option>
+                            <option value="low">ألم خفيف (1-4)</option>
+                            <option value="med">ألم متوسط (5-7)</option>
+                            <option value="high">ألم شديد (8-10)</option>
+                        </select>
+                        <select id="filterLocation" onchange="filterAndRenderDataEngine()">
+                            <option value="">كل الأماكن</option>
+                            <option value="يمين">يمين</option>
+                            <option value="يسار">يسار</option>
+                            <option value="أمام">أمام</option>
+                            <option value="خلف">خلف</option>
+                            <option value="الرقبة">الرقبة</option>
+                            <option value="حول العين">حول العين</option>
+                        </select>
+                    </div>
+
+                    <div class="table-container">
+                        <table id="mainRecordsDataTable">
+                            <thead>
+                                <tr>
+                                    <th>التاريخ</th>
+                                    <th>من</th>
+                                    <th>إلى</th>
+                                    <th>الساعات</th>
+                                    <th>مكان الألم</th>
+                                    <th>الشدة</th>
+                                    <th>النوم</th>
+                                    <th>المياه</th>
+                                    <th>الإجهاد</th>
+                                    <th>ملاحظات</th>
+                                    <th class="no-print">إجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableRecordsBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="globalModalWindow">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 id="modalWindowTitle" style="font-weight: 700;">تفاصيل نوبات اليوم</h3>
+                <button class="btn-secondary" onclick="closeModalEngine()" style="padding:4px 10px;">✕</button>
+            </div>
+            <div id="modalWindowBody"></div>
+        </div>
+    </div>
+
+    <script>
+        // مصفوفة السجلات الأساسية محملة من الـ localStorage
+        let globalRecordsArray = JSON.parse(localStorage.getItem('headache_records')) || [];
+        
+        let currentCalendarActiveYear = new Date().getFullYear();
+        let currentCalendarActiveMonth = new Date().getMonth();
+
+        const monthsNames = ["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
+        const daysNames = ["أحد","إثنين","ثلاثاء","أربعاء","خميس","جمعة","سبت"];
+
+        // عند تحميل الصفحة
+        window.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('fDate').value = new Date().toISOString().split('T')[0];
+            filterAndRenderDataEngine();
+        });
+
+        // إدارة التنبيهات (Toasts)
+        function showToast(msg, type = "success") {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<span>${msg}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => { toast.remove(); }, 3000);
+        }
+
+        // حساب فارق الساعات بين البداية والنهاية
+        function calculateHours(start, end) {
+            if(!start || !end) return 0;
+            const [sH, sM] = start.split(':').map(Number);
+            const [eH, eM] = end.split(':').map(Number);
+            let diffMins = (eH * 60 + eM) - (sH * 60 + sM);
+            if(diffMins < 0) diffMins += 24 * 60; // إذا عبر منتصف الليل
+            return parseFloat((diffMins / 60).toFixed(1));
+        }
+
+        // معالجة إرسال النموذج (حفظ وتعديل تلقائي)
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            
+            const recordId = document.getElementById('editRecordId').value;
+            const date = document.getElementById('fDate').value;
+            const timeStart = document.getElementById('fTimeStart').value;
+            const timeEnd = document.getElementById('fTimeEnd').value;
+            const severity = parseInt(document.getElementById('fSeverity').value);
+            const location = document.querySelector('input[name="fLoc"]:checked').value;
+            const water = parseFloat(document.getElementById('fWater').value) || 0;
+            const sleep = parseFloat(document.getElementById('fSleep').value) || 0;
+            const stress = parseInt(document.getElementById('fStress').value) || 0;
+            const notes = document.getElementById('fNotes').value;
+
+            const duration = calculateHours(timeStart, timeEnd);
+
+            const recordData = {
+                id: recordId || Date.now().toString(),
+                date, timeStart, timeEnd, duration, severity, location, water, sleep, stress, notes
+            };
+
+            if(recordId) {
+                // تعديل
+                globalRecordsArray = globalRecordsArray.map(r => r.id === recordId ? recordData : r);
+                showToast("تم تحديث السجل بنجاح");
+            } else {
+                // إضافة جديدة
+                globalRecordsArray.push(recordData);
+                showToast("تم حفظ السجل الطبي بنجاح");
+            }
+
+            saveToLocalStorage();
+            resetForm();
+            filterAndRenderDataEngine();
+        }
+
+        // حفظ مصفوفة البيانات في متصفح المستخدم
+        function saveToLocalStorage() {
+            localStorage.setItem('headache_records', JSON.stringify(globalRecordsArray));
+        }
+
+        function resetForm() {
+            document.getElementById('editRecordId').value = "";
+            document.getElementById('headacheForm').reset();
+            document.getElementById('valSeverity').innerText = "5";
+            document.getElementById('valStress').innerText = "4";
+            document.getElementById('fDate').value = new Date().toISOString().split('T')[0];
+            document.getElementById('btnSubmitForm').innerText = "💾 حفظ السجل الطبي";
+            document.getElementById('btnCancelEdit').style.display = "none";
+        }
+
+        // فلترة وعرض كافة المكونات المعتمدة على البيانات
+        function filterAndRenderDataEngine() {
+            const filSev = document.getElementById('filterSeverity').value;
+            const filLoc = document.getElementById('filterLocation').value;
+
+            // تصفية المصفوفة المعروضة بالجدول فقط
+            const filtered = globalRecordsArray.filter(r => {
+                if(filLoc && r.location !== filLoc) return false;
+                if(filSev) {
+                    if(filSev === 'low' && r.severity > 4) return false;
+                    if(filSev === 'med' && (r.severity < 5 || r.severity > 7)) return false;
+                    if(filSev === 'high' && r.severity < 8) return false;
+                }
+                return true;
+            }).sort((a,b) => new Date(b.date) - new Date(a.date));
+
+            renderTable(filtered);
+            calculateGlobalStats();
+            renderCalendarEngine();
+            renderNativeSvgChart();
+        }
+
+        // صياغة جدول البيانات التراكمي
+        function renderTable(data) {
+            const tbody = document.getElementById('tableRecordsBody');
+            tbody.innerHTML = "";
+
+            if(data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; color:var(--text-muted);">لا توجد سجلات متطابقة.</td></tr>`;
+                return;
+            }
+
+            data.forEach(r => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${r.date}</td>
+                    <td>${r.timeStart}</td>
+                    <td>${r.timeEnd}</td>
+                    <td>${r.duration} ساعة</td>
+                    <td><span style="font-weight:600;">${r.location}</span></td>
+                    <td><span style="color:${r.severity >= 8 ? 'var(--danger)' : r.severity >= 5 ? 'var(--warning)' : 'var(--success)'}; font-weight:bold;">${r.severity}/10</span></td>
+                    <td>${r.sleep} س</td>
+                    <td>${r.water} لتر</td>
+                    <td>${r.stress}/10</td>
+                    <td style="max-width:180px; overflow:hidden; text-overflow:ellipsis;" title="${r.notes || ''}">${r.notes || '-'}</td>
+                    <td class="no-print">
+                        <button class="btn-secondary" style="padding:4px 8px; font-size:0.8rem;" onclick="loadRecordToForm('${r.id}')">✏️</button>
+                        <button class="btn-danger" style="padding:4px 8px; font-size:0.8rem;" onclick="deleteRecordEngine('${r.id}')">🗑️</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // تحميل السجل إلى الاستمارة من أجل التعديل
+        function loadRecordToForm(id) {
+            const r = globalRecordsArray.find(item => item.id === id);
+            if(!r) return;
+
+            document.getElementById('editRecordId').value = r.id;
+            document.getElementById('fDate').value = r.date;
+            document.getElementById('fTimeStart').value = r.timeStart;
+            document.getElementById('fTimeEnd').value = r.timeEnd;
+            document.getElementById('fSeverity').value = r.severity;
+            document.getElementById('valSeverity').innerText = r.severity;
+            document.getElementById('fWater').value = r.water;
+            document.getElementById('fSleep').value = r.sleep;
+            document.getElementById('fStress').value = r.stress;
+            document.getElementById('valStress').innerText = r.stress;
+            document.getElementById('fNotes').value = r.notes || "";
+
+            // تحديد مكان الألم
+            const radio = document.querySelector(`input[name="fLoc"][value="${r.location}"]`);
+            if(radio) radio.checked = true;
+
+            document.getElementById('btnSubmitForm').innerText = "🔄 تحديث وإعادة حفظ البيانات";
+            document.getElementById('btnCancelEdit').style.display = "inline-flex";
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // حذف السجل نهائيا
+        function deleteRecordEngine(id) {
+            if(confirm("هل تود تأكيد حذف هذا السجل بشكل نهائي؟")) {
+                globalRecordsArray = globalRecordsArray.filter(item => item.id !== id);
+                saveToLocalStorage();
+                filterAndRenderDataEngine();
+                showToast("تم حذف السجل بنجاح", "error");
+            }
+        }
+
+        // محرك العمليات الرياضية والإحصائية
+        function calculateGlobalStats() {
+            const total = globalRecordsArray.length;
+            document.getElementById('stValCount').innerText = total;
+
+            if(total === 0) {
+                document.getElementById('stValTotalHours').innerText = "0";
+                document.getElementById('stValAvgSeverity').innerText = "0";
+                document.getElementById('stValMaxSeverity').innerText = "0";
+                document.getElementById('stValTopLocation').innerText = "-";
+                document.getElementById('stValAvgSleep').innerText = "0";
+                document.getElementById('stValAvgWater').innerText = "0";
+                document.getElementById('stValAvgStress').innerText = "0";
+                return;
+            }
+
+            let hours = 0, sumSev = 0, maxSev = 0, sumSleep = 0, sumWater = 0, sumStress = 0;
+            let locMap = {};
+
+            globalRecordsArray.forEach(r => {
+                hours += r.duration;
+                sumSev += r.severity;
+                if(r.severity > maxSev) maxSev = r.severity;
+                sumSleep += r.sleep;
+                sumWater += r.water;
+                sumStress += r.stress;
+
+                locMap[r.location] = (locMap[r.location] || 0) + 1;
+            });
+
+            // العثور على مكان الألم الأكثر تكراراً
+            let topLoc = "-";
+            let maxCount = 0;
+            for(let l in locMap) {
+                if(locMap[l] > maxCount) { maxCount = locMap[l]; topLoc = l; }
+            }
+
+            document.getElementById('stValTotalHours').innerText = Math.round(hours);
+            document.getElementById('stValAvgSeverity').innerText = (sumSev / total).toFixed(1);
+            document.getElementById('stValMaxSeverity').innerText = maxSev;
+            document.getElementById('stValTopLocation').innerText = topLoc;
+            document.getElementById('stValAvgSleep').innerText = (sumSleep / total).toFixed(1);
+            document.getElementById('stValAvgWater').innerText = (sumWater / total).toFixed(1);
+            document.getElementById('stValAvgStress').innerText = (sumStress / total).toFixed(1);
+        }
+
+        // بناء ومحاكاة التقويم شهرياً ومحلياً
+        function navigateCalendar(dir) {
+            currentCalendarActiveMonth += dir;
+            if(currentCalendarActiveMonth > 11) { currentCalendarActiveMonth = 0; currentCalendarActiveYear++; }
+            if(currentCalendarActiveMonth < 0) { currentCalendarActiveMonth = 11; currentCalendarActiveYear--; }
+            renderCalendarEngine();
+        }
+
+        function renderCalendarEngine() {
+            document.getElementById('calendarMonthYearDisplay').innerText = `${monthsNames[currentCalendarActiveMonth]} ${currentCalendarActiveYear}`;
+            const grid = document.getElementById('calendarGridContent');
+            grid.innerHTML = "";
+
+            // كتابة أسماء الأيام
+            daysNames.forEach(d => {
+                grid.innerHTML += `<div class="calendar-day-name">${d}</div>`;
+            });
+
+            const firstDayIndex = new Date(currentCalendarActiveYear, currentCalendarActiveMonth, 1).getDay();
+            const totalDaysInMonth = new Date(currentCalendarActiveYear, currentCalendarActiveMonth + 1, 0).getDate();
+
+            // خانات فارغة قبل بداية الشهر
+            for(let i = 0; i < firstDayIndex; i++) {
+                grid.innerHTML += `<div class="calendar-cell empty"></div>`;
+            }
+
+            // تعبئة أيام الشهر
+            for(let day = 1; day <= totalDaysInMonth; day++) {
+                const dayStr = `${currentCalendarActiveYear}-${String(currentCalendarActiveMonth+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+                const daysRecords = globalRecordsArray.filter(r => r.date === dayStr);
+
+                let cellClass = "calendar-cell";
+                let innerIndicator = "";
+                if(daysRecords.length > 0) {
+                    cellClass += " has-headache";
+                    innerIndicator = `<span style="font-size:0.7rem; display:block; color:var(--danger)">🔴 ${daysRecords.length}</span>`;
+                }
+
+                const cell = document.createElement('div');
+                cell.className = cellClass;
+                cell.innerHTML = `<span>${day}</span>${innerIndicator}`;
+                if(daysRecords.length > 0) {
+                    cell.onclick = () => openDayDetailsModal(dayStr, daysRecords);
+                }
+                grid.appendChild(cell);
+            }
+        }
+
+        // فتح نافذة المودال لعرض النوبات المسجلة في هذا اليوم
+        function openDayDetailsModal(dateStr, records) {
+            document.getElementById('modalWindowTitle').innerText = `نوبات يوم: ${dateStr}`;
+            const body = document.getElementById('modalWindowBody');
+            body.innerHTML = "";
+
+            records.forEach((r, idx) => {
+                body.innerHTML += `
+                    <div style="border: 1px solid var(--border-color); padding:12px; margin-bottom:10px; border-radius:var(--radius-md); background:var(--bg-input);">
+                        <strong>نوبة رقم ${idx+1}:</strong> من ${r.timeStart} إلى ${r.timeEnd} (${r.duration} ساعة)<br>
+                        • شدة الألم: ${r.severity}/10 | مكان التركيز: ${r.location}<br>
+                        • النوم: ${r.sleep} س | المياه: ${r.water} لتر | التوتر: ${r.stress}/10<br>
+                        • ملاحظات: ${r.notes || 'لا توجد'}<br>
+                    </div>
+                `;
+            });
+
+            document.getElementById('globalModalWindow').classList.add('active');
+        }
+
+        function closeModalEngine() {
+            document.getElementById('globalModalWindow').classList.remove('active');
+        }
+
+        // رسم بياني محلي مبتكر ومستقل بالـ SVG (Native Inline SVG Chart)
+        function renderNativeSvgChart() {
+            const svg = document.getElementById('nativeChartSvg');
+            svg.innerHTML = "";
+
+            // ترتيب البيانات زمنياً بشكل تصاعدي
+            const sortedData = [...globalRecordsArray].sort((a,b) => new Date(a.date) - new Date(b.date)).slice(-10); // آخر 10 نوبات
+
+            if(sortedData.length === 0) {
+                svg.innerHTML = `<text x="180" y="100" fill="var(--text-muted)" font-size="12">قم بإدخال بيانات لعرض المنحنى البياني الشامل</text>`;
+                return;
+            }
+
+            const width = 500;
+            const height = 200;
+            const padding = 30;
+
+            const chartWidth = width - (padding * 2);
+            const chartHeight = height - (padding * 2);
+
+            // رسم خطوط الشبكة الأفقية
+            for(let i = 0; i <= 5; i++) {
+                const y = padding + (chartHeight / 5) * i;
+                const val = 10 - (i * 2);
+                svg.innerHTML += `
+                    <line x1="${padding}" y1="${y}" x2="${width - padding}" y2="${y}" stroke="var(--border-color)" stroke-dasharray="2,2"/>
+                    <text x="${padding - 20}" y="${y + 4}" fill="var(--text-muted)" font-size="8">${val}</text>
+                `;
+            }
+
+            const points = [];
+            const count = sortedData.length;
+
+            sortedData.forEach((r, idx) => {
+                const x = padding + (chartWidth / (count > 1 ? count - 1 : 1)) * idx;
+                const y = padding + chartHeight - (chartHeight * (r.severity / 10));
+                points.push(`${x},${y}`);
+
+                // رسم نقاط دائرية لكل نوبة
+                svg.innerHTML += `
+                    <circle cx="${x}" cy="${y}" r="4" fill="var(--primary-color)"/>
+                    <text x="${x - 10}" y="${height - padding + 15}" fill="var(--text-muted)" font-size="7" transform="rotate(-15 ${x} ${height - padding + 15})">${r.date.substring(5)}</text>
+                `;
+            });
+
+            // رسم المنحنى الرابط بين النقاط
+            if(points.length > 1) {
+                const pathD = `M ${points.join(' L ')}`;
+                svg.innerHTML += `<path d="${pathD}" fill="none" stroke="var(--primary-color)" stroke-width="2.5"/>`;
+            }
+        }
+
+        // تصدير البيانات إلى ملف خارجي JSON للمحافظة عليها
+        function exportToJSON() {
+            if(globalRecordsArray.length === 0) { showToast("لا توجد سجلات لتصديرها", "error"); return; }
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(globalRecordsArray, null, 2));
+            const dlAnchorElem = document.createElement('a');
+            dlAnchorElem.setAttribute("href", dataStr);
+            dlAnchorElem.setAttribute("download", `headache_tracker_backup_${new Date().toISOString().split('T')[0]}.json`);
+            dlAnchorElem.click();
+            showToast("تم تصدير ملف الـ JSON بنجاح");
+        }
+
+        // استيراد ملف خارجي ودمجه تلقائياً
+        function importFromJSON(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    if(Array.isArray(importedData)) {
+                        globalRecordsArray = importedData;
+                        saveToLocalStorage();
+                        filterAndRenderDataEngine();
+                        showToast("تم استيراد ودمج البيانات محلياً بنجاح");
+                    } else {
+                        showToast("صيغة الملف غير صالحة", "error");
+                    }
+                } catch(err) {
+                    showToast("خطأ في قراءة ملف الـ JSON", "error");
+                }
+            };
+            reader.readAsText(file);
+        }
+    </script>
+</body>
+</html>
