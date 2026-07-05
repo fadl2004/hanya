@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Headache Tracker Pro</title>
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --primary-light: #818cf8;
+            --primary-dark: #4f46e5;
+            --bg-body: #f8fafc;
+            --bg-card: rgba(255, 255, 255, 0.8);
+            --bg-input: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --success: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-size: 16px;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .logo-area h1 {
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--primary-color);
+        }
+
+        .logo-area p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        button {
+            padding: 10px 20px;
+            border-radius: var(--radius-md);
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background-color: var(--bg-input);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--border-color);
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #dc2626;
+        }
+
+        select, input[type="text"], input[type="date"], input[type="time"], input[type="number"], textarea {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            color: var(--text-main);
+            outline: none;
+            box-shadow: inset var(--shadow-sm);
+        }
+
+        select:focus, input:focus, textarea:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+        }
+
+        @media (min-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 380px 1fr;
+            }
+        }
+
+        .card {
+            background: var(--bg-card);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 8px;
+            color: var(--primary-color);
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .slider-container input[type="range"] {
+            flex: 1;
+            accent-color: var(--primary-color);
+            height: 6px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .slider-val {
+            font-weight: 700;
+            min-width: 24px;
+            text-align: center;
+            color: var(--primary-color);
+        }
+
+        .choice-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .choice-box {
+            position: relative;
+        }
+
+        .choice-box input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+
+        .choice-label {
+            display: block;
+            padding: 8px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            text-align: center;
+            font-size: 0.85rem;
+            cursor: pointer;
+            user-select: none;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .choice-box input:checked + .choice-label {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 16px;
+            border-radius: var(--radius-md);
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .stat-box .value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            margin-top: 4px;
+        }
+
+        .stat-box .lbl {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 16px;
+            background: var(--bg-card);
+            padding: 16px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+        }
+
+        .filter-bar > * {
+            flex: 1;
+            min-width: 140px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin-top: 12px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: right;
+            font-size: 0.9rem;
+            background: var(--bg-card);
+        }
+
+        th, td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        th {
+            background-color: rgba(99, 102, 241, 0.08);
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+
+        tr:hover {
+            background-color: rgba(99, 102, 241, 0.03);
+        }
+
+        .calendar-wrapper {
+            margin-top: 24px;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+            text-align: center;
+        }
+
+        .calendar-day-name {
+            font-weight: 700;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            padding-bottom: 6px;
+        }
+
+        .calendar-cell {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-weight: 600;
+            position: relative;
+        }
+
+        .calendar-cell:hover {
+            border-color: var(--primary-color);
+        }
+
+        .calendar-cell.has-headache {
+            background-color: rgba(239, 68, 68, 0.15);
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
+        .calendar-cell .dot-indicator {
+            width: 6px;
+            height: 6px;
+            background-color: var(--danger);
+            border-radius: 50%;
+        }
+
+        .calendar-cell.empty {
+            background: transparent;
+            border: none;
+            cursor: default;
+        }
+
+        .chart-controls {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            background: var(--bg-input);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            padding: 10px;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            max-width: 400px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            padding: 14px 20px;
+            border-radius: var(--radius-md);
+            color: white;
+            font-weight: 600;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            animation: slideIn 0.3s ease forwards;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(1rem); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .toast.success { background-color: var(--success); }
+        .toast.error { background-color: var(--danger); }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(4px);
+            z-index: 5000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-card {
+            background: var(--bg-body);
+            border-radius: var(--radius-lg);
+            max-width: 600px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            padding: 24px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-color);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
+        }
+
+        @media print {
+            body {
+                background: white !important;
+                color: black !important;
+                padding: 0 !important;
+            }
+            .no-print, header, .dashboard-grid > :first-child, .filter-bar, .chart-controls, .calendar-wrapper, th:last-child, td:last-child {
+                display: none !important;
+            }
+            .dashboard-grid {
+                display: block !important;
+            }
+            .card {
+                border: none !important;
+                box-shadow: none !important;
+                background: transparent !important;
+                padding: 0 !important;
+                margin-bottom: 30px;
+            }
+            table {
+                border: 1px solid #000 !important;
+            }
+            th, td {
+                border: 1px solid #000 !important;
+                white-space: normal !important;
+                color: black !important;
+                background: transparent !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <div class="container">
+        <header class="no-print">
+            <div class="logo-area">
+                <h1>🧠 Headache Tracker Pro</h1>
+                <p>نظام ذكي متكامل لتتبع وإدارة نوبات الصداع وتحليل مسبباتها</p>
+            </div>
+            <div class="header-controls">
+                <button class="btn-primary" onclick="window.print()">🖨️ طباعة التقرير</button>
+            </div>
+        </header>
+
+        <div class="dashboard-grid">
+            
+            <div class="no-print" style="display: flex; flex-direction: column; gap: 24px;">
+                
+                <div class="card">
+                    <div class="card-title">📝 تسجيل نوبة صداع جديدة</div>
+                    <form id="headacheForm" onsubmit="handleFormSubmit(event)">
+                        <input type="hidden" id="editRecordId" value="">
+                        
+                        <div class="form-group">
+                            <label>التاريخ الدقيق</label>
+                            <input type="date" id="fDate" required>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>وقت بداية النوبة</label>
+                                <input type="time" id="fTimeStart" required>
+                            </div>
+                            <div class="form-group">
+                                <label>وقت نهاية النوبة</label>
+                                <input type="time" id="fTimeEnd" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>شدة الصداع ودرجة الألم</label>
+                            <div class="slider-container">
+                                <input type="range" id="fSeverity" min="1" max="10" value="5" oninput="document.getElementById('valSeverity').innerText = this.value">
+                                <span class="slider-val" id="valSeverity">5</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>الموقع التشريحي وتركز ألم الرأس</label>
+                            <div class="choice-grid">
+                                <div class="choice-box"><input type="radio" name="fLoc" id="loc1" value="يمين" checked><label class="choice-label" for="loc1">يمين</label></div>
+                                <div class="choice-box"><input type="radio" name="fLoc" id="loc2" value="يسار"><label class="choice-label" for="loc2">يسار</label></div>
+                                <div class="choice-box"><input type="radio" name="fLoc" id="loc3" value="أمام"><label class="choice-label" for="loc3">أمام</label></div>
+                                <div class="choice-box"><input type="radio" name="fLoc" id="loc4" value="خلف"><label class="choice-label" for="loc4">خلف</label></div>
+                                <div class="choice-box"><input type="radio" name="fLoc" id="loc5" value="الرقبة"><label class="choice-label" for="loc5">الرقبة</label></div>
+                                <div class="choice-box"><input type="radio" name="fLoc" id="loc6" value="حول العين"><label class="choice-label" for="loc6">حول العين</label></div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>معدل استهلاك المياه اليومي (لتر)</label>
+                                <input type="number" id="fWater" step="0.1" min="0" max="10" value="2.0">
+                            </div>
+                            <div class="form-group">
+                                <label>إجمالي فترات النوم المستقرة (ساعات)</label>
+                                <input type="number" id="fSleep" step="0.5" min="0" max="24" value="7">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>الجهد العصبي وضغوط البيئة المحيطة</label>
+                            <div class="slider-container">
+                                <input type="range" id="fStress" min="1" max="10" value="4" oninput="document.getElementById('valStress').innerText = this.value">
+                                <span class="slider-val" id="valStress">4</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>ملاحظات سريرية ومحفزات مخصصة</label>
+                            <textarea id="fNotes" rows="2" placeholder="الطقس، نوع الطعام، الكافيين..."></textarea>
+                        </div>
+
+                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                            <button type="submit" class="btn-primary" style="flex: 1; justify-content: center;" id="btnSubmitForm">💾 حفظ السجل الطبي</button>
+                            <button type="button" class="btn-secondary" onclick="resetForm()" id="btnCancelEdit" style="display:none;">إلغاء</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">📅 تقويم الرصد والتوزيع الشهري التلقائي</div>
+                    <div class="calendar-wrapper">
+                        <div class="calendar-header">
+                            <button class="btn-secondary" style="padding: 4px 10px;" onclick="navigateCalendar(-1)">◀</button>
+                            <h4 id="calendarMonthYearDisplay" style="font-weight: 700;"></h4>
+                            <button class="btn-secondary" style="padding: 4px 10px;" onclick="navigateCalendar(1)">▶</button>
+                        </div>
+                        <div class="calendar-grid" id="calendarGridContent"></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">💾 إدارة الملفات والنسخ واستعادة البيانات</div>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                            <button class="btn-secondary" onclick="exportToJSON()" style="justify-content: center;">📤 تصدير JSON</button>
+                            <button class="btn-secondary" onclick="exportToCSV()" style="justify-content: center;">📊 تصدير Excel CSV</button>
+                        </div>
+                        <div style="border: 1px dashed var(--border-color); padding: 10px; border-radius: var(--radius-md); text-align: center; position: relative;">
+                            <span style="font-size: 0.85rem; color: var(--text-muted);">📥 استيراد ملف بيانات النظام (JSON)</span>
+                            <input type="file" id="importFileInput" accept=".json" onchange="importFromJSON(event)" style="position: absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer;">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 24px;">
+                
+                <div class="card">
+                    <div class="card-title">📊 المؤشرات والإحصائيات التحليلية الشاملة</div>
+                    <div class="stats-grid">
+                        <div class="stat-box"><div class="lbl">عدد النوبات الإجمالي</div><div class="value" id="stValCount">0</div></div>
+                        <div class="stat-box"><div class="lbl">إجمالي ساعات الصداع</div><div class="value" id="stValTotalHours">0</div></div>
+                        <div class="stat-box"><div class="lbl">متوسط شدة الألم</div><div class="value" id="stValAvgSeverity">0</div></div>
+                        <div class="stat-box"><div class="lbl">أعلى درجة ألم مسجلة</div><div class="value" id="stValMaxSeverity">0</div></div>
+                        <div class="stat-box"><div class="lbl">أقل درجة ألم</div><div class="value" id="stValMinSeverity">0</div></div>
+                        <div class="stat-box"><div class="lbl">أكثر مكان ألم تكراراً</div><div class="value" id="stValTopLocation" style="font-size:1.1rem;">-</div></div>
+                        <div class="stat-box"><div class="lbl">أكثر توقيت حدوثاً</div><div class="value" id="stValTopTime" style="font-size:1.1rem;">-</div></div>
+                        <div class="stat-box"><div class="lbl">اليوم الأكثر إصابة</div><div class="value" id="stValTopDay" style="font-size:1.1rem;">-</div></div>
+                        <div class="stat-box"><div class="lbl">الشهر الأكثر إصابة</div><div class="value" id="stValTopMonth" style="font-size:1.1rem;">-</div></div>
+                        <div class="stat-box"><div class="lbl">أيام خالية من الصداع</div><div class="value" id="stValCleanDays">0</div></div>
+                        <div class="stat-box"><div class="lbl">متوسط مدة النوبة</div><div class="value" id="stValAvgDuration">0</div></div>
+                        <div class="stat-box"><div class="lbl">نوبات مسائية (ليلية)</div><div class="value" id="stValNightCrises">0</div></div>
+                        <div class="stat-box"><div class="lbl">نوبات صباحية</div><div class="value" id="stValMorningCrises">0</div></div>
+                        <div class="stat-box"><div class="lbl">إجمالي ساعات النوم</div><div class="value" id="stValTotalSleep">0</div></div>
+                        <div class="stat-box"><div class="lbl">متوسط شرب المياه</div><div class="value" id="stValAvgWater">0</div></div>
+                        <div class="stat-box"><div class="lbl">متوسط العبء النفسي</div><div class="value" id="stValAvgStress">0</div></div>
+                    </div>
+                </div>
+
+                <div class="card no-print">
+                    <div class="card-title">📈 الرسوم البيانية والتحليل البصري الإحصائي المتطور</div>
+                    <div class="chart-controls">
+                        <select id="chartMetricSelect" onchange="renderAdvancedMetricsChart()" style="max-width: 250px;">
+                            <option value="severity">تغير شدة الألم المتصاعد</option>
+                            <option value="duration">حجم الفترات الزمنية بالساعات</option>
+                            <option value="water">مستويات استهلاك المياه اليومية</option>
+                            <option value="sleep">مؤشرات وفترات النوم المسجلة</option>
+                            <option value="stress">تذبذبات مستويات الإجهاد النفسي</option>
+                        </select>
+                        <select id="chartTypeSelect" onchange="renderAdvancedMetricsChart()" style="max-width: 200px;">
+                            <option value="line">مخطط بياني خطي (Line)</option>
+                            <option value="bar">أعمدة بيانية (Bar)</option>
+                        </select>
+                    </div>
+                    <div class="canvas-container">
+                        <canvas id="nativeMetricsCanvas"></canvas>
+                    </div>
+                </div>
+
+                <div class="card" style="flex: 1;">
+                    <div class="card-title">🗂️ سجل النوبات الأرشيفي التاريخي وقواعد الفلترة</div>
+                    
+                    <div class="filter-bar no-print">
+                        <select id="filterLocation" onchange="filterAndRenderDataEngine()">
+                            <option value="">كل الأماكن</option>
+                            <option value="يمين">يمين</option>
+                            <option value="يسار">يسار</option>
+                            <option value="أمام">أمام</option>
+                            <option value="خلف">خلف</option>
+                            <option value="الرقبة">الرقبة</option>
+                            <option value="حول العين">حول العين</option>
+                        </select>
+                        <select id="filterSeverity" onchange="filterAndRenderDataEngine()">
+                            <option value="">كل درجات الألم</option>
+                            <option value="low">ألم خفيف (1-4)</option>
+                            <option value="med">ألم متوسط (5-7)</option>
+                            <option value="high">ألم شديد (8-10)</option>
+                        </select>
+                        <select id="filterMonth" onchange="filterAndRenderDataEngine()">
+                            <option value="">كل الأشهر التراكمية</option>
+                            <option value="01">01 - يناير</option>
+                            <option value="02">02 - فبراير</option>
+                            <option value="03">03 - مارس</option>
+                            <option value="04">04 - أبريل</option>
+                            <option value="05">05 - مايو</option>
+                            <option value="06">06 - يونيو</option>
+                            <option value="07">07 - يوليو</option>
+                            <option value="08">08 - أغسطس</option>
+                            <option value="09">09 - سبتمبر</option>
+                            <option value="10">10 - أكتوبر</option>
+                            <option value="11">11 - نوفمبر</option>
+                            <option value="12">12 - ديسمبر</option>
+                        </select>
+                        <select id="filterYear" onchange="filterAndRenderDataEngine()"></select>
+                    </div>
+
+                    <div class="table-container">
+                        <table id="mainRecordsDataTable">
+                            <thead>
+                                <tr>
+                                    <th>التاريخ</th>
+                                    <th>من</th>
+                                    <th>إلى</th>
+                                    <th>الساعات</th>
+                                    <th>مكان الألم</th>
+                                    <th>الشدة</th>
+                                    <th>النوم</th>
+                                    <th>المياه</th>
+                                    <th>الإجهاد</th>
+                                    <th>ملاحظات</th>
+                                    <th class="no-print">إجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableRecordsBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="globalModalWindow">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 id="modalWindowTitle" style="font-weight: 700;">تفاصيل نوبات اليوم</h3>
+                <button class="btn-secondary" onclick="closeModalEngine()" style="padding:4px 10px;">✕</button>
+            </div>
+            <div id="modalWindowBody"></div>
+        </div>
+    </div>
+
+    <script>
+        // تحميل مصفوفة السجلات مباشرة ومحلياً من الـ localStorage
+        let globalRecordsArray = JSON.parse(localStorage.getItem('headache_records_v2')) || [];
+        
+        let currentCalendarActiveYear = new Date().getFullYear();
+        let currentCalendarActiveMonth = new Date().getMonth();
+
+        const monthsNames = ["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
+        const daysNames = ["أحد","إثنين","ثلاثاء","أربعاء","خميس","جمعة","سبت"];
+
+        window.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('fDate').value = new Date().toISOString().split('T')[0];
+            populateYearFilterOptions();
+            filterAndRenderDataEngine();
+        });
+
+        function showToast(msg, type = "success") {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<span>${msg}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => { toast.remove(); }, 3000);
+        }
+
+        function populateYearFilterOptions() {
+            const select = document.getElementById('filterYear');
+            select.innerHTML = '<option value="">كل السنوات</option>';
+            const currentYear = new Date().getFullYear();
+            for(let y = currentYear; y >= currentYear - 5; y--) {
+                select.innerHTML += `<option value="${y}">${y}</option>`;
+            }
+        }
+
+        function calculateHours(start, end) {
+            if(!start || !end) return 0;
+            const [sH, sM] = start.split(':').map(Number);
+            const [eH, eM] = end.split(':').map(Number);
+            let diffMins = (eH * 60 + eM) - (sH * 60 + sM);
+            if(diffMins < 0) diffMins += 24 * 60;
+            return parseFloat((diffMins / 60).toFixed(1));
+        }
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            
+            const recordId = document.getElementById('editRecordId').value;
+            const date = document.getElementById('fDate').value;
+            const timeStart = document.getElementById('fTimeStart').value;
+            const timeEnd = document.getElementById('fTimeEnd').value;
+            const severity = parseInt(document.getElementById('fSeverity').value);
+            const location = document.querySelector('input[name="fLoc"]:checked').value;
+            const water = parseFloat(document.getElementById('fWater').value) || 0;
+            const sleep = parseFloat(document.getElementById('fSleep').value) || 0;
+            const stress = parseInt(document.getElementById('fStress').value) || 0;
+            const notes = document.getElementById('fNotes').value;
+
+            const duration = calculateHours(timeStart, timeEnd);
+
+            const recordData = {
+                id: recordId || Date.now().toString(),
+                date, timeStart, timeEnd, duration, severity, location, water, sleep, stress, notes
+            };
+
+            if(recordId) {
+                globalRecordsArray = globalRecordsArray.map(r => r.id === recordId ? recordData : r);
+                showToast("تم تحديث السجل وتحديث مصفوفة التتبع بنجاح");
+            } else {
+                globalRecordsArray.push(recordData);
+                showToast("تم تأمين السجل الطبي وإضافته للذاكرة بنجاح");
+            }
+
+            syncLocalStorageData();
+            resetForm();
+            filterAndRenderDataEngine();
+        }
+
+        function syncLocalStorageData() {
+            localStorage.setItem('headache_records_v2', JSON.stringify(globalRecordsArray));
+        }
+
+        function resetForm() {
+            document.getElementById('editRecordId').value = "";
+            document.getElementById('headacheForm').reset();
+            document.getElementById('valSeverity').innerText = "5";
+            document.getElementById('valStress').innerText = "4";
+            document.getElementById('fDate').value = new Date().toISOString().split('T')[0];
+            document.getElementById('btnSubmitForm').innerText = "💾 حفظ السجل الطبي";
+            document.getElementById('btnCancelEdit').style.display = "none";
+        }
+
+        function deleteRecordEngine(id) {
+            if(confirm("هل تود تأكيد حذف هذا السجل بشكل نهائي لا يمكن التراجع عنه؟")) {
+                globalRecordsArray = globalRecordsArray.filter(item => item.id !== id);
+                syncLocalStorageData();
+                filterAndRenderDataEngine();
+                showToast("تم حذف السجل من المنظومة نهائياً", "error");
+            }
+        }
+
+        function loadRecordToForm(id) {
+            const r = globalRecordsArray.find(item => item.id === id);
+            if(!r) return;
+
+            document.getElementById('editRecordId').value = r.id;
+            document.getElementById('fDate').value = r.date;
+            document.getElementById('fTimeStart').value = r.timeStart;
+            document.getElementById('fTimeEnd').value = r.timeEnd;
+            document.getElementById('fSeverity').value = r.severity;
+            document.getElementById('valSeverity').innerText = r.severity;
+            document.getElementById('fWater').value = r.water;
+            document.getElementById('fSleep').value = r.sleep;
+            document.getElementById('fStress').value = r.stress;
+            document.getElementById('valStress').innerText = r.stress;
+            document.getElementById('fNotes').value = r.notes || "";
+
+            const radio = document.querySelector(`input[name="fLoc"][value="${r.location}"]`);
+            if(radio) radio.checked = true;
+
+            document.getElementById('btnSubmitForm').innerText = "🔄 تحديث وإعادة حفظ البيانات السريرية";
+            document.getElementById('btnCancelEdit').style.display = "inline-flex";
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function filterAndRenderDataEngine() {
+            const filLoc = document.getElementById('filterLocation').value;
+            const filSev = document.getElementById('filterSeverity').value;
+            const filMonth = document.getElementById('filterMonth').value;
+            const filYear = document.getElementById('filterYear').value;
+
+            const filtered = globalRecordsArray.filter(r => {
+                if(filLoc && r.location !== filLoc) return false;
+                if(filSev) {
+                    if(filSev === 'low' && r.severity > 4) return false;
+                    if(filSev === 'med' && (r.severity < 5 || r.severity > 7)) return false;
+                    if(filSev === 'high' && r.severity < 8) return false;
+                }
+                if(r.date) {
+                    const parts = r.date.split('-');
+                    if(filYear && parts[0] !== filYear) return false;
+                    if(filMonth && parts[1] !== filMonth) return false;
+                }
+                return true;
+            }).sort((a,b) => new Date(b.date) - new Date(a.date));
+
+            renderTable(filtered);
+            calculateGlobalStats();
+            renderCalendarEngine();
+            renderAdvancedMetricsChart();
+        }
+
+        function renderTable(data) {
+            const tbody = document.getElementById('tableRecordsBody');
+            tbody.innerHTML = "";
+
+            if(data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; color:var(--text-muted);">لا توجد سجلات أرشيفية متوافقة.</td></tr>`;
+                return;
+            }
+
+            data.forEach(r => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${r.date}</td>
+                    <td>${r.timeStart}</td>
+                    <td>${r.timeEnd}</td>
+                    <td>${r.duration} س</td>
+                    <td><strong>${r.location}</strong></td>
+                    <td><span style="color:${r.severity >= 8 ? 'var(--danger)' : r.severity >= 5 ? 'var(--warning)' : 'var(--success)'}; font-weight:bold;">${r.severity}/10</span></td>
+                    <td>${r.sleep} س</td>
+                    <td>${r.water} لتر</td>
+                    <td>${r.stress}/10</td>
+                    <td style="max-width:180px; overflow:hidden; text-overflow:ellipsis;" title="${r.notes || ''}">${r.notes || '-'}</td>
+                    <td class="no-print">
+                        <button class="btn-secondary" style="padding:4px 8px;" onclick="loadRecordToForm('${r.id}')">✏️</button>
+                        <button class="btn-danger" style="padding:4px 8px;" onclick="deleteRecordEngine('${r.id}')">🗑️</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function calculateGlobalStats() {
+            const total = globalRecordsArray.length;
+            document.getElementById('stValCount').innerText = total;
+
+            if(total === 0) {
+                document.querySelectorAll('.stats-grid .value').forEach(el => { if(el.id !== 'stValCount') el.innerText = '0'; });
+                document.getElementById('stValTopLocation').innerText = '-';
+                document.getElementById('stValTopTime').innerText = '-';
+                document.getElementById('stValTopDay').innerText = '-';
+                document.getElementById('stValTopMonth').innerText = '-';
+                return;
+            }
+
+            let totalHours = 0, sumSev = 0, maxSev = 0, minSev = 10, totalSleep = 0, sumWater = 0, sumStress = 0;
+            let morningCount = 0, nightCount = 0;
+            let locMap = {}, dayMap = {}, monthMap = {}, timeMap = { 'صباحاً':0, 'مساءً':0 };
+            let uniqueDates = new Set();
+
+            globalRecordsArray.forEach(r => {
+                totalHours += r.duration;
+                sumSev += r.severity;
+                if(r.severity > maxSev) maxSev = r.severity;
+                if(r.severity < minSev) minSev = r.severity;
+                totalSleep += r.sleep;
+                sumWater += r.water;
+                sumStress += r.stress;
+                uniqueDates.add(r.date);
+
+                locMap[r.location] = (locMap[r.location] || 0) + 1;
+
+                if(r.timeStart) {
+                    const hr = parseInt(r.timeStart.split(':')[0]);
+                    if(hr >= 5 && hr < 17) { morningCount++; timeMap['صباحاً']++; }
+                    else { nightCount++; timeMap['مساءً']++; }
+                }
+
+                if(r.date) {
+                    const dObj = new Date(r.date);
+                    const dayName = daysNames[dObj.getDay()];
+                    dayMap[dayName] = (dayMap[dayName] || 0) + 1;
+                    const mName = monthsNames[dObj.getMonth()];
+                    monthMap[mName] = (monthMap[mName] || 0) + 1;
+                }
+            });
+
+            const getTopKey = (map) => {
+                let topKey = '-', max = 0;
+                for(let k in map) { if(map[k] > max) { max = map[k]; topKey = k; } }
+                return topKey;
+            };
+
+            document.getElementById('stValTotalHours').innerText = Math.round(totalHours);
+            document.getElementById('stValAvgSeverity').innerText = (sumSev / total).toFixed(1);
+            document.getElementById('stValMaxSeverity').innerText = maxSev;
+            document.getElementById('stValMinSeverity').innerText = minSev;
+            document.getElementById('stValTopLocation').innerText = getTopKey(locMap);
+            document.getElementById('stValTopTime').innerText = timeMap['صباحاً'] === timeMap['مساءً'] ? 'متساوي' : getTopKey(timeMap);
+            document.getElementById('stValTopDay').innerText = getTopKey(dayMap);
+            document.getElementById('stValTopMonth').innerText = getTopKey(monthMap);
+            document.getElementById('stValCleanDays').innerText = Math.max(0, 30 - uniqueDates.size);
+            document.getElementById('stValAvgDuration').innerText = (totalHours / total).toFixed(1) + ' س';
+            document.getElementById('stValNightCrises').innerText = nightCount;
+            document.getElementById('stValMorningCrises').innerText = morningCount;
+            document.getElementById('stValTotalSleep').innerText = Math.round(totalSleep) + ' س';
+            document.getElementById('stValAvgWater').innerText = (sumWater / total).toFixed(1) + ' لتر';
+            document.getElementById('stValAvgStress').innerText = (sumStress / total).toFixed(1);
+        }
+
+        function navigateCalendar(dir) {
+            currentCalendarActiveMonth += dir;
+            if(currentCalendarActiveMonth > 11) { currentCalendarActiveMonth = 0; currentCalendarActiveYear++; }
+            if(currentCalendarActiveMonth < 0) { currentCalendarActiveMonth = 11; currentCalendarActiveYear--; }
+            renderCalendarEngine();
+        }
+
+        function renderCalendarEngine() {
+            document.getElementById('calendarMonthYearDisplay').innerText = `${monthsNames[currentCalendarActiveMonth]} ${currentCalendarActiveYear}`;
+            const grid = document.getElementById('calendarGridContent');
+            grid.innerHTML = "";
+
+            daysNames.forEach(d => { grid.innerHTML += `<div class="calendar-day-name">${d}</div>`; });
+
+            const firstDayIndex = new Date(currentCalendarActiveYear, currentCalendarActiveMonth, 1).getDay();
+            const totalDaysInMonth = new Date(currentCalendarActiveYear, currentCalendarActiveMonth + 1, 0).getDate();
+
+            for(let i = 0; i < firstDayIndex; i++) {
+                grid.innerHTML += `<div class="calendar-cell empty"></div>`;
+            }
+
+            for(let day = 1; day <= totalDaysInMonth; day++) {
+                const dayStr = `${currentCalendarActiveYear}-${String(currentCalendarActiveMonth+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+                const daysRecords = globalRecordsArray.filter(r => r.date === dayStr);
+
+                let cellClass = "calendar-cell";
+                let indicator = "";
+                if(daysRecords.length > 0) {
+                    cellClass += " has-headache";
+                    indicator = `<div class="dot-indicator"></div>`;
+                }
+
+                const cell = document.createElement('div');
+                cell.className = cellClass;
+                cell.innerHTML = `<span>${day}</span>${indicator}`;
+                if(daysRecords.length > 0) {
+                    cell.onclick = () => openDayDetailsModal(dayStr, daysRecords);
+                }
+                grid.appendChild(cell);
+            }
+        }
+
+        function openDayDetailsModal(dateStr, records) {
+            document.getElementById('modalWindowTitle').innerText = `نوبات يوم: ${dateStr}`;
+            const body = document.getElementById('modalWindowBody');
+            body.innerHTML = "";
+
+            records.forEach((r, idx) => {
+                body.innerHTML += `
+                    <div style="border:1px solid var(--border-color); padding:14px; margin-bottom:12px; border-radius:var(--radius-md); background:var(--bg-input);">
+                        <strong style="color:var(--primary-color);">سجل نوبة رقم ${idx+1}:</strong> من ${r.timeStart} إلى ${r.timeEnd} (${r.duration} ساعة)<br>
+                        • شدة الألم: ${r.severity}/10 | التركيز التشريحي: ${r.location}<br>
+                        • النوم: ${r.sleep} ساعة | استهلاك المياه: ${r.water} لتر | مستوى التوتر: ${r.stress}/10<br>
+                        • الملاحظات: ${r.notes || 'لا يوجد معلومات إضافية'}<br>
+                    </div>
+                `;
+            });
+
+            document.getElementById('globalModalWindow').classList.add('active');
+        }
+
+        function closeModalEngine() {
+            document.getElementById('globalModalWindow').classList.remove('active');
+        }
+
+        // محرك الرسم البياني المحلي المستقل (Native Web Canvas Engine) - يعمل محلياً وتلقائياً بالكامل
+        function renderAdvancedMetricsChart() {
+            const canvas = document.getElementById('nativeMetricsCanvas');
+            if(!canvas) return;
+            const ctx = canvas.getContext('2d');
+            
+            // تعيين مساحة العرض الفعلية للرسم المحلي
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = (rect.width || 800) * dpr;
+            canvas.height = 300 * dpr;
+            ctx.scale(dpr, dpr);
+
+            const width = rect.width || 800;
+            const height = 300;
+
+            ctx.clearRect(0, 0, width, height);
+
+            const metric = document.getElementById('chartMetricSelect').value;
+            const type = document.getElementById('chartTypeSelect').value;
+
+            const dataPoints = [...globalRecordsArray].sort((a,b) => new Date(a.date) - new Date(b.date)).slice(-12);
+
+            if(dataPoints.length === 0) {
+                ctx.fillStyle = '#64748b';
+                ctx.font = '14px system-ui';
+                ctx.textAlign = 'center';
+                ctx.fillText('يرجى إضافة سجلات طبية كافية لتفعيل التحليل البياني المرئي', width / 2, height / 2);
+                return;
+            }
+
+            const paddingLeft = 50;
+            const paddingRight = 30;
+            const paddingTop = 30;
+            const paddingBottom = 40;
+            
+            const graphWidth = width - paddingLeft - paddingRight;
+            const graphHeight = height - paddingTop - paddingBottom;
+
+            let maxVal = 10;
+            if(metric === 'duration') {
+                maxVal = Math.max(...dataPoints.map(d => d.duration), 5);
+            } else if(metric === 'water') {
+                maxVal = Math.max(...dataPoints.map(d => d.water), 3);
+            } else if(metric === 'sleep') {
+                maxVal = Math.max(...dataPoints.map(d => d.sleep), 8);
+            }
+
+            // رسم شبكة إرشادية أفقية وقيم المحور الصادي
+            ctx.strokeStyle = '#e2e8f0';
+            ctx.lineWidth = 1;
+            ctx.fillStyle = '#64748b';
+            ctx.font = '10px system-ui';
+            ctx.textAlign = 'right';
+
+            for (let i = 0; i <= 4; i++) {
+                const y = paddingTop + (graphHeight / 4) * i;
+                const val = (maxVal - (maxVal / 4) * i).toFixed(1);
+                ctx.beginPath();
+                ctx.moveTo(paddingLeft, y);
+                ctx.lineTo(width - paddingRight, y);
+                ctx.stroke();
+                ctx.fillText(val, paddingLeft - 10, y + 4);
+            }
+
+            const count = dataPoints.length;
+            const stepX = graphWidth / (count > 1 ? count - 1 : 1);
+            const barWidth = (graphWidth / count) * 0.6;
+
+            // رسم المنحنيات والأعمدة
+            if(type === 'line') {
+                ctx.strokeStyle = '#6366f1';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+
+                dataPoints.forEach((d, idx) => {
+                    const val = d[metric] || 0;
+                    const x = paddingLeft + (stepX * idx);
+                    const y = paddingTop + graphHeight - (graphHeight * (val / maxVal));
+
+                    if(idx === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                });
+                ctx.stroke();
+            }
+
+            dataPoints.forEach((d, idx) => {
+                const val = d[metric] || 0;
+                let x = paddingLeft + (stepX * idx);
+                const y = paddingTop + graphHeight - (graphHeight * (val / maxVal));
+
+                if(type === 'bar') {
+                    x = paddingLeft + (graphWidth / count) * idx + (graphWidth / count - barWidth) / 2;
+                    ctx.fillStyle = 'rgba(99, 102, 241, 0.85)';
+                    ctx.fillRect(x, y, barWidth, paddingTop + graphHeight - y);
+                } else {
+                    ctx.fillStyle = '#4f46e5';
+                    ctx.beginPath();
+                    ctx.arc(x, y, 5, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                // طباعة نصوص المحور السيني الدلالية (التواريخ)
+                if(d.date) {
+                    ctx.fillStyle = '#64748b';
+                    ctx.font = '9px system-ui';
+                    ctx.textAlign = 'center';
+                    const textX = type === 'bar' ? x + barWidth / 2 : x;
+                    ctx.fillText(d.date.substring(5), textX, height - paddingBottom + 18);
+                }
+            });
+        }
+
+        // تصدير واستيراد البيانات التراكمية
+        function exportToJSON() {
+            if(globalRecordsArray.length === 0) { showToast("لا توجد سجلات طبية محفوظة لتصديرها", "error"); return; }
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(globalRecordsArray, null, 2));
+            const anchor = document.createElement('a');
+            anchor.setAttribute("href", dataStr);
+            anchor.setAttribute("download", `headache_records_backup_${new Date().toISOString().split('T')[0]}.json`);
+            anchor.click();
+            showToast("تم تصدير ملف الـ JSON بنجاح");
+        }
+
+        function exportToCSV() {
+            if(globalRecordsArray.length === 0) { showToast("لا توجد سجلات لتصديرها لـ Excel", "error"); return; }
+            let csvContent = "\uFEFFالتاريخ,وقت البداية,وقت النهاية,المدة بالساعات,مكان الألم,شدة الألم,ساعات النوم,شرب المياه,مستوى التوتر,الملاحظات\n";
+            globalRecordsArray.forEach(r => {
+                let cleanNotes = (r.notes || '-').replace(/,/g, ' ').replace(/\n/g, ' ');
+                csvContent += `${r.date},${r.timeStart},${r.timeEnd},${r.duration},${r.location},${r.severity},${r.sleep},${r.water},${r.stress},${cleanNotes}\n`;
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute("download", `headache_report_${new Date().toISOString().split('T')[0]}.csv`);
+            link.click();
+            showToast("تم تصدير ملف Excel CSV بنجاح");
+        }
+
+        function importFromJSON(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    if(Array.isArray(importedData)) {
+                        globalRecordsArray = importedData;
+                        syncLocalStorageData();
+                        filterAndRenderDataEngine();
+                        showToast("اكتملت عملية استيراد قواعد البيانات وبنائها بنجاح مذهل");
+                    } else {
+                        showToast("فشلت بنية الملف في الاستيراد، تأكد من صحة الملف", "error");
+                    }
+                } catch(err) {
+                    showToast("فشلت بنية الملف في الاستيراد، تأكد من سلامة البنية التكوينية لـ JSON", "error");
+                }
+            };
+            reader.readAsText(file);
+        }
+    </script>
+</body>
+</html>
